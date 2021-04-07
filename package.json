@@ -1,0 +1,14 @@
+{
+  "name": "@grunmouse/syntax-lr0",
+  "version": "0.1.0",
+  "description": "maker LR(0) from BFN-like description",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@grunmouse/stack": "link:..\\stack"
+  }
+}
