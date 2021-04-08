@@ -1,20 +1,14 @@
 const MakeSyntax = require('./make-syntax.js');
-const makeTranslator = require('./translator.js');
+const makeTranslator = require('./make-translator.js');
 const parseNotation = require('./parse-notation.js');
 
 
 const  {
-	parseRule,
-	SituationsSet,
-	CLOSURE,
-	GOTO,
-	buildGraph,
-	makeStates,
-	toDot
+	buildGraph
 } = MakeSyntax;
 
 function makeSyntax(code, start){
-	start = start || 'MAIN';
+	start = start || '<MAIN>';
 	const {all} = parseNotation(code);
 	const graph = buildGraph(start, all);
 
@@ -23,14 +17,12 @@ function makeSyntax(code, start){
 	//console.log(graph.reduce);
 	//console.log(toDot(graph.edges, graph.reduce));
 
-	if(graph.conflict.lenght > 0){
+	if(graph.docs.conflict.lenght > 0){
 		console.log(graph.conflict);
 		throw new Error('Grammatic conflict!');
 	}
 
-	const State = makeStates(graph.edges, graph.reduce);
-
-	
+	return graph.config;
 }
 
 
@@ -38,7 +30,7 @@ module.exports = {
 	dev:{
 		parseNotation,
 		...MakeSyntax
-	}
+	},
 	makeSyntax,
 	makeTranslator
 };
