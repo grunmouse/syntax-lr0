@@ -118,13 +118,20 @@ function makeTranslator({nodes, table}, Special){
 			let state = stack.top;
 			let type = token.type;
 			
-			let index = table[state][type];
+			let q = table[state];
+			if(!q){
+				throw new Error('Not Exists state #'+state);
+			}
+			let index = q[type];
 			
 			let node = nodes[index];
 			
 			if(node){
 				let handler = node.rule;
 				token = makeHandler(handler)(token, lib);
+				if(!table[stack.top]){
+					throw new Error(`Invalid state after state=${state} token=${type}`);
+				}
 			}
 			else if(type === '<MAIN>'){
 				return token;
