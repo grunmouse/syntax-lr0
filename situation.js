@@ -1,9 +1,4 @@
 const inspect = Symbol.for('nodejs.util.inspect.custom');
-//const util = require('util');
-
-//[util.inspect.custom]
-
-//console.log(inspect === util.inspect.custom);
 
 /**
  * Ситуацию, возникающую при разборе правила грамматики

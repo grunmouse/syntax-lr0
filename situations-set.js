@@ -1,11 +1,6 @@
 const inspect = Symbol.for('nodejs.util.inspect.custom');
 
 const Situation = require('./situation.js');
-//const util = require('util');
-
-//[util.inspect.custom]
-
-//console.log(inspect === util.inspect.custom);
 
 /**
  * Преобразует ситуацию в виде строки или экземпляра в пару ключ-значение
