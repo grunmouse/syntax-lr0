@@ -1,4 +1,5 @@
 const SituationsSet = require('./situations-set.js');
+const Situation = require('./situation.js');
 
 /**
  * Расширяет ситуационное множество I правилами разбора всех нетерминалов, которые могут быть следующими
@@ -39,10 +40,7 @@ function GOTO(I, X, all){
 	return CLOSURE(arr, all);
 }
 
-/**
- * Множество всех терминальных символов, которые могут быть первыми в разложении A
- */
-function FIRST(A, all){
+function firstA(A, all){
 	let s = CLOSURE(all.itrForLeft(A), all);
 	let symbols = new Set([...s].map(s=>s.right[0]));
 	symbols.add(A);
@@ -50,7 +48,61 @@ function FIRST(A, all){
 }
 
 /**
- * Множество всех символов, которые могут стоять после A
+ * Множество всех терминальных символов, которые могут быть первыми в разложении A
+ */
+function FIRST(arr, all, net, black){
+	net = net || all.allLeft();
+	black = black || new Set();
+	let A = arr[0];
+	let symbols;
+	
+	if(net.has(A)){
+		if(!black.has(A)){
+			black.add(A);
+			let s = CLOSURE(all.itrForLeft(A), all);
+			let symbs = [];
+			for(let B of s){
+				if(B.right.length > 0){
+					symbs.push(...FIRST(B.right, all, net, black));
+				}
+				else{
+					symbs.push(undefined);
+				}
+			}
+			symbols = new Set(symbs);
+		}
+		else{
+			if(all.existsEmptyFor(A)){
+				symbols = new Set([undefined]);
+			}
+			else{
+				symbols = new Set();
+			}
+		}
+	}
+	else{
+		symbols = new Set([A]);
+	}
+	
+	if(symbols.has(undefined)){
+		let last = arr.slice(1);
+		if(last.length === 0){
+			
+		}
+		else{
+			symbols.delete(undefined);
+			symbols = new Set([
+				...symbols,
+				...FIRST(last, all, net, black)
+			]);
+		}
+	}
+	
+	return symbols;
+}
+
+/**
+ * Множество всех терминальных символов, которые могут стоять после A
  */
 function FOLLOW(A, all){
 	const arr = [A];
@@ -92,6 +144,14 @@ function FOLLOW(A, all){
 	
 	return result.filter((sym)=>(!net.has(sym)));
 }
+
+function APPEND(I, left, right){
+	
+	const arr = [...I, new Situation(left, right)];
+	
+	return new SituationsSet(arr);
+}
+
 
 module.exports = {
 	CLOSURE,

@@ -1,0 +1,6 @@
+S := S b A c;
+S := ;
+A := A c B S;
+A := a c;
+B := ;
+B := B c;

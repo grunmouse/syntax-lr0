@@ -1,0 +1,7 @@
+S := a B;
+S := b A;
+S := ;
+B := b S;
+B := a B B;
+A := a S;
+A := b A A;

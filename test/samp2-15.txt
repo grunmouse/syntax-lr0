@@ -1,0 +1,13 @@
+S := A S A;
+S := A L;
+S := R A;
+L := A L;
+L := c;
+R := R A;
+R := c;
+S := a N b;
+S := b N a;
+N := A N A;
+N := c;
+A := a;
+A := b;

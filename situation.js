@@ -1,7 +1,8 @@
 const inspect = Symbol.for('nodejs.util.inspect.custom');
 
 /**
- * Ситуацию, возникающую при разборе правила грамматики
+ * Предаставляет ситуацию, возникающую при разборе правила грамматики.
+ * Используется для представления самого правила, если игнорировать позицию.
  */
 class Situation{
 	/**
@@ -17,6 +18,13 @@ class Situation{
 	
 	get isFinal(){
 		return this.pos>=this.right.length;
+	}
+	
+	/**
+	 * Признак правила A => eps
+	 */
+	get isEmpty(){
+		return this.right.length === 0;
 	}
 	
 	get next(){

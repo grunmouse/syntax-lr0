@@ -2,6 +2,38 @@ const inspect = Symbol.for('nodejs.util.inspect.custom');
 
 const Situation = require('./situation.js');
 
+
+/**
+ * Парсит строковое представление ситуации
+ * Синтаксис:
+ *   знак ":=" - разделитель левой и правой части
+ *   знак "*" - позиция точки распознавания
+ *   одиночные кавычки "'" - обозначают имя, содержащее пробелы и сами являются его частью
+ *   имя символа - строка без пробелов или произвольная строка в одиночных кавычках
+ *   пробелы вне одинарных кавычек - служат разделителями имён, если не стоят между именами - то игнорируются
+ *   если точка "*" не задана, то позиция будет поставлена на начало правила
+ *
+ * @param code : string
+ */
+function parseRule(code){
+	let [left, right] = code.split(':=');
+	left = left.trim();
+	right = right.trim();
+	let items = right.split(/\s+|('[^']+')/g).filter((a)=>(!!a));
+	
+	let pos = items.indexOf('*');
+	
+	if(pos>-1){
+		items.splice(pos, 1);
+	}
+	else{
+		pos = 0;
+	}
+	
+	return new Situation(left, items, pos);
+}
+
+
 /**
  * Преобразует ситуацию в виде строки или экземпляра в пару ключ-значение
  * @param item : (String|Situation)
@@ -86,6 +118,9 @@ class SituationsSet extends Map{
 		return reduce.length>1 || reduce.length === 1 && this.size > 1;
 	}
 	
+	/**
+	 * Возвращает итератор всех правил, которые завершились
+	 */
 	*itrFinal(){
 		for(let item of this){
 			if(item.isFinal){
@@ -120,6 +155,17 @@ class SituationsSet extends Map{
 		}
 	}
 	
+	existsEmptyFor(name){
+		for(let item of this){
+			if(item.left === name){
+				if(item.isEmpty){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	allLeft(){
 		const result = new Set()
 		for(let item of this){
@@ -127,7 +173,11 @@ class SituationsSet extends Map{
 		}
 		return result;
 	}
+
 	
+	/**
+	 * Все символы, не встречающиеся в левой части правил (нетерминалы)
+	 */	
 	allWithoutLeft(){
 		const net = new Set()
 		let arr = [];
@@ -142,40 +192,24 @@ class SituationsSet extends Map{
 		return arr;
 	}
 	
+	/**
+	 * Выбрать одно правило
+	 */
 	getFirst(){
 		return this.values().next().value;
 	}
 	
-}
-
-/**
- * Парсит строковое представление ситуации
- * Синтаксис:
- *   знак ":=" - разделитель левой и правой части
- *   знак "*" - позиция точки распознавания
- *   одиночные кавычки "'" - обозначают имя, содержащее пробелы и сами являются его частью
- *   имя символа - строка без пробелов или произвольная строка в одиночных кавычках
- *   пробелы вне одинарных кавычек - служат разделителями имён, если не стоят между именами - то игнорируются
- *   если точка "*" не задана, то позиция будет поставлена на начало правила
- *
- * @param code : string
- */
-function parseRule(code){
-	let [left, right] = code.split(':=');
-	left = left.trim();
-	right = right.trim();
-	let items = right.split(/\s+|('[^']+')/g).filter((a)=>(!!a));
-	
-	let pos = items.indexOf('*');
-	
-	if(pos>-1){
-		items.splice(pos, 1);
+	allWithoutRight(){
+		const net = [];
+		let arr = [];
+		for(let item of this){
+			arr.push(...item.right);
+			net.push(item.left);
+		}
+		let right = new Set(arr);
+		
+		return net.filter((sym)=>(!right.has(sym)));		
 	}
-	else{
-		pos = 0;
-	}
-	
-	return new Situation(left, items, pos);
 }
 
 
