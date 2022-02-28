@@ -97,7 +97,7 @@ function calcFIRST(arr, FIRST){
 	return result;
 }
 
-function buildFOLLOW(A, all, FIRST, TERMINATOR){
+function buildFOLLOW(all, FIRST, TERMINATOR){
 	const map = new MapOfSet();
 	const net = all.allLeft();
 	const term = all.allWithoutLeft();
@@ -139,6 +139,9 @@ function buildFOLLOW(A, all, FIRST, TERMINATOR){
 	return map;
 }
 
+/**
+ * Обрезанная до k символов конкатенация языков L1 и L2
+ */
 function OPLUSK(k, L1, L2){
 	let result = new SetOfArray();
 	let prefix = new SetOfArray();
