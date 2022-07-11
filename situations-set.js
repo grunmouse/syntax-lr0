@@ -176,7 +176,7 @@ class SituationsSet extends Map{
 
 	
 	/**
-	 * Все символы, не встречающиеся в левой части правил (нетерминалы)
+	 * Все символы, не встречающиеся в левой части правил (терминалы)
 	 */	
 	allWithoutLeft(){
 		const net = new Set()
@@ -199,6 +199,9 @@ class SituationsSet extends Map{
 		return this.values().next().value;
 	}
 	
+	/**
+	 * Все символы, не встречающиеся в правой части (корневые)
+	 */
 	allWithoutRight(){
 		const net = [];
 		let arr = [];

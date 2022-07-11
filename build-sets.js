@@ -14,6 +14,9 @@ const SetOfArray = SetWithKeyFunction((arr)=>(arr.join(SEP)));
 
 const MapOfSetOfArray = MapOfSpecialSet(SetOfArray, []);
 
+/**
+ * Множество символов, раскрывающихся в пустую строку
+ */
 function buildEMPTY(all){
 	let result = new Set();
 	let count = 0;
@@ -35,6 +38,57 @@ function buildEMPTY(all){
 			rules.push(rule);
 		}
 		all = new SituationsSet(rules);
+	}
+	
+	return result;
+}
+
+/**
+ * Строит множество полезных символов языка
+ */
+function buildPRODUCTIVE(all){
+	//Все терминальные символы - полезные
+	let result = new Set(all.allWithoutLeft());
+	let count = 0;
+	let queue = [...result];
+	while(result.size > count){
+		count = result.size;
+		let rules = [];
+		for(let sym of
+		for(let {left, right} of all){
+			right = right.filter((A)=>(!result.has(A))); //Находим символы правой части, не входящие в result
+			//Полезным считаем символ, который раскрывается в строку полезных символов или в пустую строку
+			let rule = new Situation(left, right);
+			if(rule.isEmpty){
+				result.add(rule.left);
+			}
+			else{
+				rules.push(rule);
+			}
+		}
+		all = new SituationsSet(rules);
+	}
+	
+	return result;
+}
+
+/**
+ * Строит множество достижимых символов языка
+ */
+function buildREACHABLE(all, start){
+	let result = new Set(start);
+	let count = 0;
+	let queue = [...result], index = 0;
+	for(;index<queue.length;++index){
+		let sym = queue[index];
+		for(let {left, right} of all.itrForLeft(sym)){
+			for(let sym of right){
+				if(!result.has(sym)){
+					result.add(sym);
+					queue.push(sym);
+				}
+			}
+		}
 	}
 	
 	return result;

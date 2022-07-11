@@ -11,8 +11,10 @@ class Language{
 	}
 	
 	build1(){
-		this._EMPTY = buildEMPTY(this.rules);
-		this._FIRST = buildFIRST(this.rules, this._EMPTY);
+		const all = this.rules;
+		this._EMPTY = buildEMPTY(all);
+		this._FIRST = buildFIRST(all, this._EMPTY);
+		this._FOLLOW = buildFOLLOW(all, this._FIRST, TERMINATOR);
 	}
 	
 }
